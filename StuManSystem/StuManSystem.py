@@ -97,16 +97,40 @@ def delete():
             break
 
 def modify():
-
+    show()
+    if os.path.exists(filename):
+        with open(filename, 'r', encoding='utf-8') as rfile:
+            stu_old = rfile.readlines()
+    else:
+        return
+    stu_id = input('请输入修改id')
+    with open(filename, 'w', encoding='utf-8') as wfile:
+        for item in stu_old:
+            d = dict(eval(item))
+            if d['id'] == stu_id:
+                print('存在该学生，可以修改')
+                while True:
+                    try:
+                        d['name'] = input('请输入姓名')
+                        d['english'] = input('请输入英语成绩')
+                        d['math'] = input('请输入数学成绩')
+                        d['python'] = input('q请输入python成绩')
+                    except:
+                        print('输入信息有误')
+                    else:
+                        break
+                wfile.write(str(d) + '\n')
+                print('修改成功')
+        print('不存在该学生')
+        answer = input('是否继续修改Y/N')
+        if answer == 'Y' or answer == 'y':
+            modify()
 def sort():
     pass
 def total():
     pass
 def show():
     pass
-
-
-
 def menm():
     print('==============================学生信息管理系统============================')
     print('---------------------------------功能菜单--------------------------------')
