@@ -6,7 +6,7 @@ filename = 'student.txt'
 
 def main():
     while True:
-        menm()
+        menu()
         choice = int(input('请选择'))
         if choice in range(8):
             if choice == 0:
@@ -70,7 +70,41 @@ def save(lst):
 
 
 def search():
-    pass
+    stu_query = []
+    while True:
+        if os.path.exists(filename):
+            mode = input('按id查找请输入1；按姓名查找请输入2')
+            if mode == '1':
+                stu_id = input('请输入学生id')
+                with open(filename, 'r', encoding='utf-8') as rfile:
+                    stu_table = rfile.readlines()
+                    for item in stu_table:
+                        d = dict(eval(item))
+                        if d['id'] == stu_id:
+                            stu_query.append(d)
+            elif mode == '2':
+                stu_name = input('请输入学生姓名')
+                with open(filename, 'r', encoding='utf-8') as rfile:
+                    stu_table = rfile.readlines()
+                    for item in stu_table:
+                        d = dict(eval(item))
+                        if d['name'] == stu_name:
+                            stu_query.append(d)
+            else:
+                print('输入有误')
+                search()
+            # 显示结果
+            show_stu(stu_query)
+            # 清空列表
+            stu_query.clear()
+            answer = input('是否继续？Y/N\n')
+            if answer == 'Y' or answer == 'y':
+                continue
+            else:
+                break
+        else:
+            print('暂无学生信息')
+            return
 
 
 def delete():
@@ -139,18 +173,84 @@ def modify():
 
 
 def sort():
-    pass
+    if os.path.exists(filename):
+        with open(filename, 'r', encoding='utf-8') as rfile:
+            stu = rfile.readlines()
+        stu_dict = []
+        for item in stu:
+            stu_dict.append(dict(eval(item)))
+    else:
+        print('暂无学生信息')
+        return
+    mode_tag = False
+    mode = input('升序排序输入1；降序排序输入2')
+    if mode == '1':
+        mode_tag = False
+    elif mode == '2':
+        mode_tag == True
+    else:
+        print('输入有误')
+        sort()
+    sort_tag = input('按英语成绩排序输入1；按数学成绩排序输入2；按python成绩排序输入3；按总成绩排序输入4')
+    if sort_tag == '1':
+        stu_dict.sort(key=lambda x: int(x['english']), reverse=mode_tag)
+    elif sort_tag == '2':
+        stu_dict.sort(key=lambda x: int(x['math']), reverse=mode_tag)
+    elif sort_tag == '3':
+        stu_dict.sort(key=lambda x: int(x['python']), reverse=mode_tag)
+    elif sort_tag == '4':
+        stu_dict.sort(key=lambda x: int(x['english']) + int(x['math']) + int(x['python']), reverse=mode_tag)
+    else:
+        print('输入有误。')
+        sort()
+    # 显示结果
+    show_stu(stu_dict)
 
 
 def total():
-    pass
+    if os.path.exists(filename):
+        with open(filename, 'r', encoding='utf-8') as rfile:
+            stu = rfile.readlines()
+            if stu:
+                print('一共有{}学生'.format(len(stu)))
+            else:
+                print('暂无学生信息')
+    else:
+        print('暂无学生信息')
 
 
 def show():
-    pass
+    stu_list = []
+    if os.path.exists(filename):
+        with open(filename, 'r', encoding='utf-8') as rfile:
+            stu = rfile.readlines()
+        for item in stu:
+            stu_list.append(eval(item))
+        if stu_list:
+            show_stu(stu_list)
+    else:
+        print('暂无学生信息')
 
 
-def menm():
+def show_stu(lst):
+    if len(lst) == 0:
+        print('无信息，无数据显示')
+        return
+    # 标题显示格式
+    format_title = '{:^6}\t{:^12}\t{:^8}\t{:^8}\t{:^10}\t{:^8}'
+    print(format_title.format('ID', '姓名', '英语成绩', '数学成绩', 'Python成绩', '总成绩', ))
+    # 内容显示格式
+    format_data = '{:^6}\t{:^12}\t{:^8}\t{:^8}\t{:^10}\t{:^8}'
+    for item in lst:
+        print(format_data.format(item['id'],
+                                 item['name'],
+                                 item['english'],
+                                 item['math'],
+                                 item['python'],
+                                 int(item['english']) + int(item['math']) + int(item['python'])))
+
+
+def menu():
     print('==============================学生信息管理系统============================')
     print('---------------------------------功能菜单--------------------------------')
     print('\t\t\t\t\t\t1.录入学生信息')
